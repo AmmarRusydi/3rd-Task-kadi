@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">GPS</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="Button1">Set Distance</string>
+    <string name="title_activity_location">LocationService</string>
+    <string name="fragment">locationfragment</string>
+    <string-array name="M_array">
+        <item>Default Mode</item>
+        <item>100 Meter</item>
+        <item>500 Meter</item>
+        <item>1000 Meter</item>
+        <item>2000 Meter</item>
+    </string-array>
+    <string name="title_activity_maps">Map</string>
+</resources>
