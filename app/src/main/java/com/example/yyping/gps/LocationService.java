@@ -35,8 +35,8 @@ public class LocationService extends Service {
     private static final int LOCATION_REQUEST = INITIAL_REQUEST + 3;
     private static final int LASTKNOWN_REQUEST = INITIAL_REQUEST + 4;
 
-    public static final int SECONDS_TO_UP = 1000 * 10; //10 seconds
-    public static final int METERS_TO_UP = 1;
+    public static final int SECONDS_TO_UP = 60000 * 10; //location update every 10 minutes (60000 = 1 minute)
+    public static final int METERS_TO_UP = 50;
 
     int mIsFinish = 0;
     Location newLocation;
