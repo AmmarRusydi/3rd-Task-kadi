@@ -6,6 +6,21 @@
     <string name="Button1">Set Distance</string>
     <string name="title_activity_location">LocationService</string>
     <string name="fragment">locationfragment</string>
+
+    <string name="geofence_transition_notification_title">
+        %1$s geofence(s) %2$s
+    </string>
+    <string name="geofence_transition_notification_text">
+        Click notification to return to app
+    </string>
+
+    <string name="geofence_transition_unknown">Unknown transition</string>
+    <string name="geofence_transition_entered">Entered</string>
+    <string name="geofence_transition_exited">Exited</string>
+    <string name="geofence_transition_dwell">Stop dwelling!</string>
+
+    <string name="geofence_intent_service">Geofence Intent Service</string>
+
     <string-array name="M_array">
         <item>Default Mode</item>
         <item>100 Meter</item>

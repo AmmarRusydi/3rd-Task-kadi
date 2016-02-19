@@ -3,6 +3,7 @@ package com.example.yyping.gps;
 /**
  * Created by Admin on 5/2/2016.
  */
+
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -21,6 +22,7 @@ import com.google.android.gms.location.GeofencingEvent;
 import java.util.List;
 
 public class GeofenceIntentService extends IntentService {
+
 
     private final String TAG = this.getClass().getCanonicalName();
 
@@ -47,26 +49,30 @@ public class GeofenceIntentService extends IntentService {
             int transition = geofencingEvent.getGeofenceTransition();
             String notificationTitle;
 
-            switch(transition) {
-                case Geofence.GEOFENCE_TRANSITION_ENTER:
-                    notificationTitle = "You Have Entered";
-                    Log.v(TAG, "Geofence Entered");
-                    break;
-                case Geofence.GEOFENCE_TRANSITION_DWELL:
-                    notificationTitle = "You Have Entered";
-                    Log.v(TAG, "Dwelling in Geofence");
-                    break;
-                case Geofence.GEOFENCE_TRANSITION_EXIT:
-                    notificationTitle = "You Have Exited";
-                    Log.v(TAG, "Geofence Exited");
-                    break;
-                default:
-                    notificationTitle = "Geofence Unknown";
-            }
+                switch (transition) {
+                    case Geofence.GEOFENCE_TRANSITION_ENTER:
+                        notificationTitle = "You Have Entered";
+                        Log.v(TAG, "Geofence Entered");
 
-            sendNotification(this, getTriggeringGeofences(intent), notificationTitle);
+                        break;
+                    case Geofence.GEOFENCE_TRANSITION_DWELL:
+                        notificationTitle = "You Already Entered";
+                        Log.v(TAG, "Dwelling in Geofence");   // ==============================kadi ejas TAG======================
+//                        Log.v(TAG, "Enter");
+                        break;
+                    case Geofence.GEOFENCE_TRANSITION_EXIT:
+                        notificationTitle = "You Have Exited";
+                        Log.v(TAG, "Geofence Exited");      //==============================kadi ejas TAG======================
+//                        Log.v(TAG, "Exit");
+                        break;
+                    default:
+                        notificationTitle = "Geofence Unknown";
+                }
+
+                sendNotification(this, getTriggeringGeofences(intent), notificationTitle);
+
+            }
         }
-    }
 
     //SEND NOTIFICATION METHOD
     private void sendNotification(Context context, String notificationText, String notificationTitle) {
@@ -80,7 +86,7 @@ public class GeofenceIntentService extends IntentService {
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(notificationTitle)
                 .setContentText(notificationText)
-//                .setSound(defaultSoundUri)
+                .setSound(defaultSoundUri)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setAutoCancel(false);
 

@@ -92,9 +92,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     //     * Geofence Radius'
     ArrayList<Integer> mGeofenceRadius;
 
-    // ==================================================================
-    float latitude,longitude ;
-
     //     * Geofence Store Java Class ======================================================================
     private GeofenceStore mGeofenceStore;
 
@@ -119,8 +116,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationManager locationManager;
     final Context context = this;
     private static final float MINIMUM_DISTANCECHANGE_FOR_UPDATE = 1; // in Meters
-    private static final long MINIMUM_TIME_BETWEEN_UPDATE = 60000 * 5; //location update every 5 minutes (60000 x 5). ( 60000 = 1 minute)
-    private static long POINT_RADIUS = 500; // in Meters
+    private static final long MINIMUM_TIME_BETWEEN_UPDATE = 1000 * 5; //location update every 5 minutes (60000 x 5). ( 60000 = 1 minute)
+    private static long POINT_RADIUS = 300; // in Meters
     private static final long PROX_ALERT_EXPIRATION = -1;
     private static final String POINT_LATITUDE_KEY = "POINT_LATITUDE_KEY";
     private static final String POINT_LONGITUDE_KEY = "POINT_LONGITUDE_KEY";
@@ -137,8 +134,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private String locationName;
     public static Context AlretRegion;
 
-    ArrayList<LatLng> locationList = new ArrayList<>();
-    ArrayList<String> location_Name_list = new ArrayList<>();
+    private ArrayList<LatLng> locationList = new ArrayList<>();
+    private ArrayList<String> location_Name_list = new ArrayList<>();
 
     //private GoogleMap googleMap;
     private GoogleMap mMap;
@@ -626,13 +623,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             LatLng latlng = null;
             int counter = 0;
 
+//            float latitude,longitude ;
 
             // LOCATION ARRAY LIST
             for (int i = 0; i < locationList.size(); i++) {
 
                 latlng = locationList.get(i);
-                latitude = (float) location.getLatitude();
-                longitude = (float) location.getLongitude();
+                float latitude = (float) location.getLatitude();
+                float longitude = (float) location.getLongitude();
 
                 pointLocation.setLatitude(latlng.latitude);
                 pointLocation.setLongitude(latlng.longitude);
@@ -646,7 +644,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 lstDistance.add(new Distance(distance, location_Name_list.get(i)));
 
             }
-
 
 
 
@@ -701,6 +698,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             }, 30000);*/
         }
+
 
         public void onStatusChanged(String s, int i, Bundle b) {
         }
@@ -963,6 +961,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         isGooglePlayReady = true;
         if(isLocationReady)
             btnClockIn.setEnabled(true);
+
+
     }
 
     @Override
@@ -981,11 +981,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-
-//    ===============================================ADD GEOFENCE HERE BY AMMAR ======================================================
     @Override
     public void onMyLocationChange(Location location){
         mLocation = location;
+        double distance;
+
         if(mLocation != null) {
             Log.e("onmylocationchange", "Latitude = " + mLocation.getLatitude() + ", Longitude = " + mLocation.getLongitude());
 
@@ -1022,29 +1022,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
 
-            btnClockIn.setEnabled(true);
-            btnClear.setEnabled(true);
-            btnSearch.setEnabled(true);
 
-            //Keep to update distance
-            List<Distance> lstDistance = new ArrayList<Distance>();
+            //            ======================================================== ADDED LOOP ON 11/2 6.16PM ========================================
+
             LatLng latlng = null;
-            int counter = 0;
-
-            for (int i = 0; i < locationList.size(); i++) {
-                latlng = locationList.get(i);
-                float latitude = (float) location.getLatitude();
-                float longitude = (float) location.getLongitude();
-
-                float latfixpoit = (float) latlng.latitude;
-                float longfixpoint = (float) latlng.longitude;
-
-                double distance = distFrom(latitude, longitude, latfixpoit, longfixpoint);
-                lstDistance.add(new Distance(distance, location_Name_list.get(i)));
-            }
-
-
-//            ======================================================== ADDED LOOP ON 11/2 6.16PM ========================================
 
             //Loop to get location list
             for (int i = 0; i < locationList.size(); i++) {
@@ -1064,7 +1045,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 //              mGeofenceCoordinates.add(new LatLng(3.9230733, 101.6613033)); //FingerTec R&D Centre
 
                 // Adding associated geofence radius' to array.
-                mGeofenceRadius.add(100);
+                mGeofenceRadius.add(300);
                 // mGeofenceRadius.add(60);
 
 
@@ -1076,18 +1057,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         .setExpirationDuration(Geofence.NEVER_EXPIRE)
                                 // Required when we use the transition type of GEOFENCE_TRANSITION_DWELL
                         .setLoiteringDelay(10000) // (60000 = 1 minute Delay)
-                        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT).build());
-
-
-                // FingerTec R&D Centre
-//                mGeofences.add(new Geofence.Builder()
-//                        .setRequestId("FingerTec R&D Centre")
-//                                // The coordinates of the center of the geofence and the radius in meters.
-//                        .setCircularRegion(mGeofenceCoordinates.get(0).latitude, mGeofenceCoordinates.get(0).longitude, mGeofenceRadius.get(0).intValue())
-//                        .setExpirationDuration(Geofence.NEVER_EXPIRE)
-//                                // Required when we use the transition type of GEOFENCE_TRANSITION_DWELL
-//                        .setLoiteringDelay(30000) // (60000 = 1 minute Delay)
-//                        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT).build());
+                        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT).build());
 
 
 
@@ -1099,6 +1069,75 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             } //  =================================================== END OF LOCATION LIST LOOP ADDED  ======================================
 
+
+            btnClockIn.setEnabled(true);
+            btnClear.setEnabled(true);
+            btnSearch.setEnabled(true);
+
+            //Keep to update distance
+            List<Distance> lstDistance = new ArrayList<Distance>();
+//            LatLng latlng = null;
+            int counter = 0;
+
+            for (int i = 0; i < locationList.size(); i++) {
+                latlng = locationList.get(i);
+                float latitude = (float) location.getLatitude();
+                float longitude = (float) location.getLongitude();
+
+                float latfixpoit = (float) latlng.latitude;
+                float longfixpoint = (float) latlng.longitude;
+
+                distance = distFrom(latitude, longitude, latfixpoit, longfixpoint);
+                lstDistance.add(new Distance(distance, location_Name_list.get(i)));
+            }
+
+
+
+//            //            ======================================================== ADDED LOOP ON 11/2 6.16PM ========================================
+//
+//            //Loop to get location list
+//            for (int i = 0; i < locationList.size(); i++) {
+//                latlng = locationList.get(i);
+//                float latitude = (float) location.getLatitude();
+//                float longitude = (float) location.getLongitude();
+//
+//                float latfixpoit = (float) latlng.latitude;
+//                float longfixpoint = (float) latlng.longitude;
+//
+//
+//                // Initializing variables
+//                mGeofences = new ArrayList<Geofence>();
+//                mGeofenceCoordinates = new ArrayList<LatLng>();
+//                mGeofenceRadius = new ArrayList<Integer>();
+//
+//                // Adding geofence coordinates to array.
+////                mGeofenceCoordinates.add(new LatLng(latitude, longitude));
+//                mGeofenceCoordinates.add(new LatLng(latfixpoit, longfixpoint));
+//
+//                // Adding associated geofence radius' to array.
+//                mGeofenceRadius.add(500);
+//
+//
+//                // Bulding the geofences and adding them to the geofence array.
+//                mGeofences.add(new Geofence.Builder()
+//                        .setRequestId(location_Name_list.get(i))//set name in the notification
+//                        // The coordinates of the center of the geofence and the radius in meters.
+////                        .setCircularRegion(locationList.get(i).latitude, locationList.get(i).longitude, mGeofenceRadius.get(0).intValue())
+//                        .setCircularRegion(latfixpoit, longfixpoint, mGeofenceRadius.get(0).intValue())
+//                        .setExpirationDuration(Geofence.NEVER_EXPIRE)
+//                                // Required when we use the transition type of GEOFENCE_TRANSITION_DWELL
+//                        .setLoiteringDelay(10000) // (60000 = 1 minute Delay)
+//                        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT).build());
+//
+//                // Add the geofences to the GeofenceStore.Java object.
+//                mGeofenceStore = new GeofenceStore(this, mGeofences);
+//
+//
+//                //   ==========================================END OF AMMAR'S GEOFENCE ===============================================
+//
+//            } //  =================================================== END OF LOCATION LIST LOOP ADDED  ======================================
+
+
             boolean result = false;
             cal = Calendar.getInstance();
             String currentDate = String.valueOf(android.text.format.DateFormat.format("yyyyMMdd", cal));
@@ -1108,6 +1147,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             DecimalFormat df = new DecimalFormat("0.00");
             String fullText = "";
             for (int i = 0; i < lstDistance.size(); i++) {
+
                 if (counter <= 4) {
                     Distance dc = lstDistance.get(i);
                     fullText += "Distance From " + dc.GetLocation() + ": " + getDistanceInStr(dc.GetDistance()) + "\n";
@@ -1121,7 +1161,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     Log.d("distance - " + String.valueOf(dc.GetDistance()), enterOrExit);
                     Log.d("enter - " + lastEnterTime, "exit - " + lastExitTime);
 
-                    if(dc.GetDistance() >= 500){ //outside the region now
+                    if(dc.GetDistance() >= 300){ //outside the region now
                         //Only trigger when user got enter this region before and haven't exit before
                         if(enterExist.length() > 0 && exitExist.length() == 0 && (lastExitTime.length() == 0 || !lastExitTime.equalsIgnoreCase(currentTime))){
                             result = true;
@@ -1170,6 +1210,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                 counter++;
             }
+
 
             POI1.setText(fullText);
             information.setText("");
@@ -1524,11 +1565,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
     }
 
-//======================================= AMMAR'S GEOFENCE ==========================================
+
+    //======================================= AMMAR'S GEOFENCE ==========================================
     @Override
     public void onCameraChange(CameraPosition position) {
         // Makes sure the visuals remain when zoom changes.
-        for(int i = 0; i < locationList.size(); i++) {
+        for(int i = 0; i < mGeofenceCoordinates.size(); i++) {
             mMap.addCircle(new CircleOptions().center(locationList.get(i))
                     .radius(mGeofenceRadius.get(0).intValue())
 //                    .fillColor(0x40ff0000)
@@ -1538,6 +1580,21 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     //======================================= AMMAR'S GEOFENCE ==========================================
+
+////======================================= AMMAR'S GEOFENCE ==========================================
+//    @Override
+//    public void onCameraChange(CameraPosition position) {
+//        // Makes sure the visuals remain when zoom changes.
+//        for(int i = 0; i < mGeofenceCoordinates.size(); i++) {
+//            mMap.addCircle(new CircleOptions().center(locationList.get(i))
+//                    .radius(mGeofenceRadius.get(0).intValue())
+////                    .fillColor(0x40ff0000)
+//                    .strokeColor(Color.RED).strokeWidth(5));
+//
+//        }
+//    }
+//
+//    //======================================= AMMAR'S GEOFENCE ==========================================
 }
 
 class ListComparator{

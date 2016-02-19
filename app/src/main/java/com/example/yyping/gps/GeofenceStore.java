@@ -3,14 +3,6 @@ package com.example.yyping.gps;
 /**
  * Created by Admin on 5/2/2016.
  */
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-
 import android.Manifest;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -54,6 +46,14 @@ import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 public class GeofenceStore extends Context implements ConnectionCallbacks,
         OnConnectionFailedListener, ResultCallback<Status>, LocationListener {
@@ -101,7 +101,7 @@ public class GeofenceStore extends Context implements ConnectionCallbacks,
         // Define the LocationRequest.
         mLocationRequest = new LocationRequest();
         // We want a location update every 5 minutes (60000 x 5). ( 60000 = 1 minute)
-        mLocationRequest.setInterval(60000*5);
+        mLocationRequest.setInterval(10000);
         // We want the location to be as accurate as possible.
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
