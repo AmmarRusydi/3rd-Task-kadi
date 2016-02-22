@@ -156,6 +156,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         initLoad();
         initUI();
+//        geofencing();
 
     }
 
@@ -987,12 +988,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mLocation = location;
         double distance;
 
+        LatLng latlng = null;
+
         if(mLocation != null) {
             Log.e("onmylocationchange", "Latitude = " + mLocation.getLatitude() + ", Longitude = " + mLocation.getLongitude());
 
             tvCurrentLocation.setText(getAddress(mLocation));
             if(markerCurrentLocation == null){
-                LatLng latlng = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
+               latlng = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
                 addMarker(latlng, "Current Location - " + mLocation.getLatitude() + "," + mLocation.getLongitude(), CURRENTLOCATION);
                 CameraPosition cameraPosition = new CameraPosition.Builder()
                         .target(latlng)             // Sets the center of the map to Mountain View
@@ -1020,57 +1023,61 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         addProximity(ll, locationName, false);
                         information.setText("Loading...");
                     }
+                    geofencing(); //===============================================================AMMAR ADDED ON 22 FEB=======================================================
                 }
+//                geofencing(); //===============================================================AMMAR ADDED ON 22 FEB=======================================================
+
             }
 
 
-            //            ======================================================== ADDED LOOP ON 11/2 6.16PM ========================================
+//            //            ======================================================== ADDED LOOP ON 11/2 6.16PM ========================================
+//
 
-            LatLng latlng = null;
-
-            //Loop to get location list
-            for (int i = 0; i < locationList.size(); i++) {
-                latlng = locationList.get(i);
-                float latitude = (float) location.getLatitude();
-                float longitude = (float) location.getLongitude();
-
-
-                // Initializing variables
-                mGeofences = new ArrayList<Geofence>();
-                mGeofenceCoordinates = new ArrayList<LatLng>();
-                mGeofenceRadius = new ArrayList<Integer>();
-
-
-                // Adding geofence coordinates to array.
-                mGeofenceCoordinates.add(new LatLng(latitude,longitude));
-//              mGeofenceCoordinates.add(new LatLng(3.9230733, 101.6613033)); //FingerTec R&D Centre
-
-                // Adding associated geofence radius' to array.
-                mGeofenceRadius.add(500);
-                // mGeofenceRadius.add(60);
-
-
-                // Bulding the geofences and adding them to the geofence array.
-                // HALLOOO R&D Centre
-                mGeofences.add(new Geofence.Builder().setRequestId(location_Name_list.get(i))//set name in the notification
-                        // The coordinates of the center of the geofence and the radius in meters.
-//                        .setCircularRegion(locationList.get(i).latitude, locationList.get(i).longitude, mGeofenceRadius.get(0).intValue())
-                        .setCircularRegion(locationList.get(i).latitude, locationList.get(i).longitude,POINT_RADIUS)
-                        .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                        .setNotificationResponsiveness(60000 * 5)//set notification update response for 5 minutes
-                                // Required when we use the transition type of GEOFENCE_TRANSITION_DWELL
-                        .setLoiteringDelay(30000) // (60000 = 1 minute Delay)
-                        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT).build());
-
-
-
-                // Add the geofences to the GeofenceStore.Java object.
-                mGeofenceStore = new GeofenceStore(this, mGeofences);
-
-
-                //   ==========================================END OF AMMAR'S GEOFENCE ===============================================
-
-            } //  =================================================== END OF LOCATION LIST LOOP ADDED  ======================================
+//
+//            //Loop to get location list
+//            for (int i = 0; i < locationList.size(); i++) {
+//                latlng = locationList.get(i);
+//                float latitude = (float) location.getLatitude();
+//                float longitude = (float) location.getLongitude();
+//
+//
+//                // Initializing variables
+//                mGeofences = new ArrayList<Geofence>();
+//                mGeofenceCoordinates = new ArrayList<LatLng>();
+//                mGeofenceRadius = new ArrayList<Integer>();
+//
+//
+//                // Adding geofence coordinates to array.
+//                mGeofenceCoordinates.add(new LatLng(latitude,longitude));
+////              mGeofenceCoordinates.add(new LatLng(3.9230733, 101.6613033)); //FingerTec R&D Centre
+//
+//                // Adding associated geofence radius' to array.
+//                mGeofenceRadius.add(500);
+//                // mGeofenceRadius.add(60);
+//
+//
+//                // Bulding the geofences and adding them to the geofence array.
+//                // HALLOOO R&D Centre
+//                mGeofences.add(new Geofence.Builder()
+//                        .setRequestId(location_Name_list.get(i))//set name in the notification
+//                        // The coordinates of the center of the geofence and the radius in meters.
+////                        .setCircularRegion(locationList.get(i).latitude, locationList.get(i).longitude, mGeofenceRadius.get(0).intValue())
+//                        .setCircularRegion(locationList.get(i).latitude, locationList.get(i).longitude,POINT_RADIUS)
+//                        .setExpirationDuration(Geofence.NEVER_EXPIRE)
+//                        .setNotificationResponsiveness(60000 * 5)//set notification update response for 5 minutes
+//                                // Required when we use the transition type of GEOFENCE_TRANSITION_DWELL
+//                        .setLoiteringDelay(30000) // (60000 = 1 minute Delay)
+//                        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT).build());
+//
+//
+//
+//                // Add the geofences to the GeofenceStore.Java object.
+//                mGeofenceStore = new GeofenceStore(this, mGeofences);
+//
+//
+//                //   ==========================================END OF AMMAR'S GEOFENCE ===============================================
+//
+//            } //  =================================================== END OF LOCATION LIST LOOP ADDED  ======================================
 
 
             btnClockIn.setEnabled(true);
@@ -1093,52 +1100,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 distance = distFrom(latitude, longitude, latfixpoit, longfixpoint);
                 lstDistance.add(new Distance(distance, location_Name_list.get(i)));
             }
-
-
-
-//            //            ======================================================== ADDED LOOP ON 11/2 6.16PM ========================================
-//
-//            //Loop to get location list
-//            for (int i = 0; i < locationList.size(); i++) {
-//                latlng = locationList.get(i);
-//                float latitude = (float) location.getLatitude();
-//                float longitude = (float) location.getLongitude();
-//
-//                float latfixpoit = (float) latlng.latitude;
-//                float longfixpoint = (float) latlng.longitude;
-//
-//
-//                // Initializing variables
-//                mGeofences = new ArrayList<Geofence>();
-//                mGeofenceCoordinates = new ArrayList<LatLng>();
-//                mGeofenceRadius = new ArrayList<Integer>();
-//
-//                // Adding geofence coordinates to array.
-////                mGeofenceCoordinates.add(new LatLng(latitude, longitude));
-//                mGeofenceCoordinates.add(new LatLng(latfixpoit, longfixpoint));
-//
-//                // Adding associated geofence radius' to array.
-//                mGeofenceRadius.add(500);
-//
-//
-//                // Bulding the geofences and adding them to the geofence array.
-//                mGeofences.add(new Geofence.Builder()
-//                        .setRequestId(location_Name_list.get(i))//set name in the notification
-//                        // The coordinates of the center of the geofence and the radius in meters.
-////                        .setCircularRegion(locationList.get(i).latitude, locationList.get(i).longitude, mGeofenceRadius.get(0).intValue())
-//                        .setCircularRegion(latfixpoit, longfixpoint, mGeofenceRadius.get(0).intValue())
-//                        .setExpirationDuration(Geofence.NEVER_EXPIRE)
-//                                // Required when we use the transition type of GEOFENCE_TRANSITION_DWELL
-//                        .setLoiteringDelay(10000) // (60000 = 1 minute Delay)
-//                        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT).build());
-//
-//                // Add the geofences to the GeofenceStore.Java object.
-//                mGeofenceStore = new GeofenceStore(this, mGeofences);
-//
-//
-//                //   ==========================================END OF AMMAR'S GEOFENCE ===============================================
-//
-//            } //  =================================================== END OF LOCATION LIST LOOP ADDED  ======================================
 
 
             boolean result = false;
@@ -1232,6 +1193,58 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         intent.putExtra(Constants.LOCATION_DATA_EXTRA, mLocation);
         startService(intent);
     }*/
+
+//    ===========================================================================GEOFENCE METHOD =============================================================
+
+    private void geofencing(){
+        //            ======================================================== ADDED LOOP ON 11/2 6.16PM ========================================
+
+        LatLng latlng = null;
+
+        //Loop to get location list
+        for (int i = 0; i < locationList.size(); i++) {
+            latlng = locationList.get(i);
+            float latitude = (float) mLocation.getLatitude();
+            float longitude = (float) mLocation.getLongitude();
+
+
+            // Initializing variables
+            mGeofences = new ArrayList<Geofence>();
+            mGeofenceCoordinates = new ArrayList<LatLng>();
+            mGeofenceRadius = new ArrayList<Integer>();
+
+
+            // Adding geofence coordinates to array.
+            mGeofenceCoordinates.add(new LatLng(latitude,longitude));
+//              mGeofenceCoordinates.add(new LatLng(3.9230733, 101.6613033)); //FingerTec R&D Centre
+
+            // Adding associated geofence radius' to array.
+            mGeofenceRadius.add(500);
+            // mGeofenceRadius.add(60);
+
+
+            // Bulding the geofences and adding them to the geofence array.
+            // HALLOOO R&D Centre
+            mGeofences.add(new Geofence.Builder().setRequestId(location_Name_list.get(i))//set name in the notification
+                    // The coordinates of the center of the geofence and the radius in meters.
+//                        .setCircularRegion(locationList.get(i).latitude, locationList.get(i).longitude, mGeofenceRadius.get(0).intValue())
+                    .setCircularRegion(locationList.get(i).latitude, locationList.get(i).longitude, POINT_RADIUS)
+                    .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                    .setNotificationResponsiveness(60000 * 5)//set notification update response for 5 minutes
+                            // Required when we use the transition type of GEOFENCE_TRANSITION_DWELL
+                    .setLoiteringDelay(30000) // (60000 = 1 minute Delay)
+                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT).build());
+
+
+            // Add the geofences to the GeofenceStore.Java object.
+            mGeofenceStore = new GeofenceStore(this, mGeofences);
+
+
+            //   ==========================================END OF AMMAR'S GEOFENCE ===============================================
+
+        } //  =================================================== END OF LOCATION LIST LOOP ADDED  =====================================
+
+    }//    ===================================================END OF GEOFENCE METHOD =============================================================
 
     private String getAddress(Location location){
         String result = "No location found";

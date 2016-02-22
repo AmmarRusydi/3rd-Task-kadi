@@ -57,13 +57,11 @@ public class GeofenceIntentService extends IntentService {
                         break;
                     case Geofence.GEOFENCE_TRANSITION_DWELL:
                         notificationTitle = "You Already Entered";
-                        Log.v(TAG, "Dwelling in Geofence");   // ==============================kadi ejas TAG======================
-//                        Log.v(TAG, "Enter");
+                        Log.v(TAG, "Dwelling in Geofence");
                         break;
                     case Geofence.GEOFENCE_TRANSITION_EXIT:
                         notificationTitle = "You Have Exited";
-                        Log.v(TAG, "Geofence Exited");      //==============================kadi ejas TAG======================
-//                        Log.v(TAG, "Exit");
+                        Log.v(TAG, "Geofence Exited");
                         break;
                     default:
                         notificationTitle = "Geofence Unknown";
