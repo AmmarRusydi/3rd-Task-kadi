@@ -19,5 +19,7 @@
         android:layout_weight="1"
         android:layout_margin="10dp"
         android:text="New Text"
+        android:maxLines = "100000"
+        android:scrollbars = "vertical"
         android:id="@+id/tv_logcontent" />
 </LinearLayout>

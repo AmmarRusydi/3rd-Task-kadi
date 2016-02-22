@@ -30,6 +30,7 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -115,9 +116,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private MarkerOptions markerCurrentLocation;
     private LocationManager locationManager;
     final Context context = this;
-    private static final float MINIMUM_DISTANCECHANGE_FOR_UPDATE = 1; // in Meters
-    private static final long MINIMUM_TIME_BETWEEN_UPDATE = 1000 * 5; //location update every 5 minutes (60000 x 5). ( 60000 = 1 minute)
-    private static long POINT_RADIUS = 300; // in Meters
+    private static final float MINIMUM_DISTANCECHANGE_FOR_UPDATE = 30; // in Meters
+    private static final long MINIMUM_TIME_BETWEEN_UPDATE = 60000 * 5; //location update every 5 minutes (60000 x 5). ( 60000 = 1 minute)
+    private static long POINT_RADIUS = 500; // in Meters
     private static final long PROX_ALERT_EXPIRATION = -1;
     private static final String POINT_LATITUDE_KEY = "POINT_LATITUDE_KEY";
     private static final String POINT_LONGITUDE_KEY = "POINT_LONGITUDE_KEY";
@@ -1045,7 +1046,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 //              mGeofenceCoordinates.add(new LatLng(3.9230733, 101.6613033)); //FingerTec R&D Centre
 
                 // Adding associated geofence radius' to array.
-                mGeofenceRadius.add(300);
+                mGeofenceRadius.add(500);
                 // mGeofenceRadius.add(60);
 
 
@@ -1053,10 +1054,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 // HALLOOO R&D Centre
                 mGeofences.add(new Geofence.Builder().setRequestId(location_Name_list.get(i))//set name in the notification
                         // The coordinates of the center of the geofence and the radius in meters.
-                        .setCircularRegion(locationList.get(i).latitude, locationList.get(i).longitude, mGeofenceRadius.get(0).intValue())
+//                        .setCircularRegion(locationList.get(i).latitude, locationList.get(i).longitude, mGeofenceRadius.get(0).intValue())
+                        .setCircularRegion(locationList.get(i).latitude, locationList.get(i).longitude,POINT_RADIUS)
                         .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                        .setNotificationResponsiveness(60000 * 5)//set notification update response for 5 minutes
                                 // Required when we use the transition type of GEOFENCE_TRANSITION_DWELL
-                        .setLoiteringDelay(10000) // (60000 = 1 minute Delay)
+                        .setLoiteringDelay(30000) // (60000 = 1 minute Delay)
                         .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT).build());
 
 
@@ -1161,7 +1164,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     Log.d("distance - " + String.valueOf(dc.GetDistance()), enterOrExit);
                     Log.d("enter - " + lastEnterTime, "exit - " + lastExitTime);
 
-                    if(dc.GetDistance() >= 300){ //outside the region now
+                    if(dc.GetDistance() >= 500){ //outside the region now
                         //Only trigger when user got enter this region before and haven't exit before
                         if(enterExist.length() > 0 && exitExist.length() == 0 && (lastExitTime.length() == 0 || !lastExitTime.equalsIgnoreCase(currentTime))){
                             result = true;
@@ -1521,6 +1524,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         // set prompts.xml to alertdialog builder
         alertDialogBuilder.setView(promptsView);
         TextView content = (TextView) promptsView.findViewById(R.id.tv_logcontent);
+        content.setMovementMethod(new ScrollingMovementMethod());
         Log.d("log", pref.getString("log", ""));
         content.setText(pref.getString("log", ""));
 
@@ -1570,10 +1574,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onCameraChange(CameraPosition position) {
         // Makes sure the visuals remain when zoom changes.
-        for(int i = 0; i < mGeofenceCoordinates.size(); i++) {
+        for(int i = 0; i < locationList.size(); i++) {
             mMap.addCircle(new CircleOptions().center(locationList.get(i))
-                    .radius(mGeofenceRadius.get(0).intValue())
-//                    .fillColor(0x40ff0000)
+                    .radius(POINT_RADIUS)
+//                    .radius(mGeofenceRadius.get(0).intValue())
+                    .fillColor(0x40ff0000)
                     .strokeColor(Color.RED).strokeWidth(5));
 
         }

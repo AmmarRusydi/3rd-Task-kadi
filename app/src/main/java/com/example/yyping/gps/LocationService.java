@@ -37,7 +37,7 @@ public class LocationService extends Service {
     private static final int LOCATION_REQUEST = INITIAL_REQUEST + 3;
     private static final int LASTKNOWN_REQUEST = INITIAL_REQUEST + 4;
 
-    public static final int SECONDS_TO_UP = 60000 * 10; //location update every 10 minutes (60000 = 1 minute)
+    public static final int SECONDS_TO_UP = 60000 * 5; //location update every 5 minutes (60000 = 1 minute)
     public static final int METERS_TO_UP = 50;
 
     int mIsFinish = 0;
@@ -219,7 +219,7 @@ public class LocationService extends Service {
             Log.d("service distance - " + String.valueOf(cp.getDistance()), enterOrExit);
             Log.d("service enter - " + lastEnterTime, "exit - " + lastExitTime);
 
-            if (cp.getDistance() >= 300) { //outside the region now
+            if (cp.getDistance() >= 500) { //outside the region now
                 //Only trigger when user got enter this region before and haven't exit before
                 if (enterExist.length() > 0 && exitExist.length() == 0 && (lastExitTime.length() == 0 || !lastExitTime.equalsIgnoreCase(currentTime))) {
                     result = true;

@@ -68,7 +68,6 @@ public class GeofenceIntentService extends IntentService {
                     default:
                         notificationTitle = "Geofence Unknown";
                 }
-
                 sendNotification(this, getTriggeringGeofences(intent), notificationTitle);
 
             }
